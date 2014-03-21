@@ -1,0 +1,59 @@
+<head>
+  <title>tictactoe</title>
+</head>
+
+<body>
+  {{> partials}}
+</body>
+
+<template name="partials">
+
+	{{#if partial 'loggedOut'}}
+		{{> loggedOut}}
+	{{else}} {{#if partial 'loggedIn'}}
+  	{{> loggedIn}}
+  {{/if}} {{/if}}
+
+</template>
+
+
+<template name="loggedOut">
+	<h2>Who do you want to play as?</h2>
+	<button id="login-x">X</button>
+	<button id="login-o">O</button>
+</template>
+
+
+<template name="loggedIn">
+	{{> stats}}
+	{{> newScript}}
+	{{> scripts}}
+</template>
+
+<template name="stats">
+	<h1>{{player}}</h1>
+	<h2>Wins: {{wins}}</h2>
+	<h2>Losses: {{losses}}</h2>
+	<h2>Ties: {{ties}}</h2>
+	<h2>Happening: {{happening}}</h2>
+</template>
+
+<template name="newScript">
+	<h1>
+		function(possibleMoves) {<br>
+		&nbsp;&nbsp;// fill in code here<br>
+		}
+	</h1>
+
+	<input class="new-script" type="text" value="function(moves){moves.forEach(function(move){if (move.row === 1 && move.column === 1) {move.weight = 1;}});}" />
+  <input class="submit-new-script" type="button" value="submit code" />
+</template>
+
+<template name="scripts">
+	<ol>
+		{{#each scripts}}
+			<li>{{logic}}</li>
+		{{/each}}
+	</ol>
+</template>
+
