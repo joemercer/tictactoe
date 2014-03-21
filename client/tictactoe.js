@@ -69,9 +69,11 @@ Template.newScript.events({
     var editor = ace.edit('aceEditor');
     var logic = editor.getValue();
 
-    Scripts.insert({
-      player: Session.get('player'),
-      logic: logic
+    Meteor.apply('insertScript', [Session.get('player'), logic], function(error, result){
+
+      // !!! handle errors
+      // and other things
+      console.log(result);
     });
 
     editor.setValue('the new text here');

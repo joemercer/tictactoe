@@ -241,3 +241,26 @@ Meteor.startup(function() {
 
 	}, 1*1000);
 });
+
+
+
+
+
+
+
+
+
+
+Meteor.methods({
+  insertScript: function(player, logic) {
+
+  	// !!! do some error checking I think
+
+    Scripts.insert({
+      player: player,
+      logic: logic
+    });
+
+    return {result: 'worked :)'};
+  }
+});
