@@ -39,14 +39,25 @@
 </template>
 
 <template name="newScript">
-	<h1>
-		function(possibleMoves) {<br>
-		&nbsp;&nbsp;// fill in code here<br>
-		}
-	</h1>
-
-	<input class="new-script" type="text" value="function(moves){moves.forEach(function(move){if (move.row === 1 && move.column === 1) {move.weight = 1;}});}" />
+	{{> aceEditor}}
+	<br>
   <input class="submit-new-script" type="button" value="submit code" />
+</template>
+
+<template name="aceEditor">
+	{{#constant}}
+function(possibleMoves) {
+		<div id='aceEditor'>// for example
+function(moves){
+	moves.forEach(function(move){
+		if (move.row === 1 && move.column === 1)
+			{move.weight = 1;
+		}
+	});
+}
+		</div>
+}
+	{{/constant}}
 </template>
 
 <template name="scripts">

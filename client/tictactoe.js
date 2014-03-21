@@ -66,16 +66,25 @@ Template.stats.happening = function() {
 
 Template.newScript.events({
   'click input.submit-new-script' : function(e) {
-    var logic = $('.new-script').val();
+    var editor = ace.edit('aceEditor');
+    var logic = editor.getValue();
 
     Scripts.insert({
       player: Session.get('player'),
       logic: logic
     });
 
-    $('.new-script').val('write code here');
+    editor.setValue('the new text here');
   }
 });
+
+Template.aceEditor.rendered = function() {
+  var editor = ace.edit('aceEditor');
+  editor.setTheme('ace/theme/github');
+  editor.getSession().setMode('ace/mode/javascript');
+  editor.setHighlightActiveLine(true);
+  editor.getSession().setTabSize(2);
+};
 
 // # scripts
 // _________

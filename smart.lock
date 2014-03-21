@@ -2,13 +2,19 @@
   "meteor": {},
   "dependencies": {
     "basePackages": {
-      "npm": {}
+      "npm": {},
+      "ace-embed": {}
     },
     "packages": {
       "npm": {
         "git": "https://github.com/arunoda/meteor-npm.git",
         "tag": "v0.2.6",
         "commit": "177ab6118de5bf8cffb19481343d5762ff7a2aaf"
+      },
+      "ace-embed": {
+        "git": "https://github.com/stuartfenton/meteor-ace-embed.git",
+        "tag": "v0.0.4",
+        "commit": "027b0e1b0d06111b51a713f04a8b8750fdcbd289"
       }
     }
   }
