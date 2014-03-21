@@ -91,6 +91,18 @@ Template.aceEditor.rendered = function() {
 // # scripts
 // _________
 
+Template.scripts.events({
+  'click input.activate-script' : function(e) {
+
+    Meteor.apply('activateScript', [this._id], function(error, result){
+
+      // !!! handle errors
+
+    });
+
+  }
+});
+
 Template.scripts.scripts = function() {
   return Scripts.find({player: Session.get('player')});
 };

@@ -63,7 +63,7 @@ function(moves){
 <template name="scripts">
 	<ol>
 		{{#each scripts}}
-			<li>{{logic}}</li>
+			<li>{{logic}} <input class="activate-script" type="button" value="{{active}}" /></li>
 		{{/each}}
 	</ol>
 </template>

@@ -230,7 +230,11 @@ Meteor.startup(function() {
 
 		Games.find({result: false}).forEach(function(game){
 
-			var scripts = Scripts.find({player: game.currentPlayer}).fetch();
+			var scripts = Scripts.find({
+				player: game.currentPlayer,
+				active: true
+			}).fetch();
+
 			if (!scripts) {
 				scripts = [];
 			}
@@ -258,9 +262,22 @@ Meteor.methods({
 
     Scripts.insert({
       player: player,
-      logic: logic
+      logic: logic,
+      active: true
     });
 
     return {result: 'worked :)'};
+  },
+  activateScript: function(id) {
+  	var script = Scripts.findOne({
+  		_id: id
+  	});
+
+  	if (script) {
+  		script.active = !script.active;
+  		Scripts.update({_id: script._id}, script);
+  	}
+
+  	return true;
   }
 });
