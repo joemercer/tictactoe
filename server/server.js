@@ -131,6 +131,7 @@ var checkForWinner = function(gameBoard) {
 takeTurn = function(game, scripts) {
 	// !!! potentially want to do a deep clone here
 	var possibleMoves = game.possibleMoves;
+	var board = game.board;
 
 	// run the possible moves through the logic pipeline
 	scripts.forEach(function(script){
@@ -139,13 +140,18 @@ takeTurn = function(game, scripts) {
 
 		possibleMoves.forEach(function(possibleMove){
 
-			// ExamplePossibleMove = {
+			// Example:: possibleMove = {
 			// 	row: int row in board,
 			// 	column: int column in board,
 			// 	weight: relative chance of happening
 			// };
+			// Example:: game.board = 
+			// 	[['x', ' ', ' '],
+			// 	 [' ', 'o', ' '],
+			// 	 [' ', 'x', ' ']];
+
 			try {
-				localeval('('+script.logic+')(possibleMove)', {possibleMove: possibleMove});
+				localeval('('+script.logic+')(possibleMove, board)', {possibleMove: possibleMove, board: board});
 			}
 			catch(e) {
 				console.log('ERROR: '+e)

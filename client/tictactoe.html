@@ -48,9 +48,14 @@
 	{{#constant}}
 function(possibleMove) {
 		<div id='aceEditor'>// for example
-function(move){
+function(move, board){
 	if (move.row === 1 && move.column === 1) {
 		move.weight = 1;
+	}
+	if (board[1][1] === 'x') {
+		if (move.row === 0 && move.column === 0) {
+			move.weight = 1;
+		}
 	}
 }
 		</div>
