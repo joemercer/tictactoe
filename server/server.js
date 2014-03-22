@@ -135,18 +135,29 @@ takeTurn = function(game, scripts) {
 	// run the possible moves through the logic pipeline
 	scripts.forEach(function(script){
 
-		// !!! add a timeout requires a callback function to be defined
-		try {
-			// eval('('+script.logic+')(possibleMoves)');
-			localeval('('+script.logic+')(possibleMoves)', {possibleMoves: possibleMoves});
-		}
-		catch(e) {
-			console.log('ERROR: '+e)
-		}
+		// for each of the possibleMoves call the user's script on each possibleMove
+
+		possibleMoves.forEach(function(possibleMove){
+
+			// ExamplePossibleMove = {
+			// 	row: int row in board,
+			// 	column: int column in board,
+			// 	weight: relative chance of happening
+			// };
+			try {
+				localeval('('+script.logic+')(possibleMove)', {possibleMove: possibleMove});
+			}
+			catch(e) {
+				console.log('ERROR: '+e)
+			}
+
+		});
 
 	});
 
 	try {
+		// !!! need to check that weight isn't negative
+		// !!! perhaps use a Math.absolute?
 		// find the sum of all the weight
 		var totalWeight = 0;
 		possibleMoves.forEach(function(possibleMove){
@@ -250,11 +261,19 @@ Meteor.startup(function() {
 
 
 
+var tests = [
+	{
+		input: 'hello',
+		output: 'world'
+	}
+];
 
 
 
 
-
+// these are some methods that the client can call
+// but get run on the server
+// so the client can't mess with them
 Meteor.methods({
   insertScript: function(player, logic) {
 

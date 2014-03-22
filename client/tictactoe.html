@@ -46,14 +46,12 @@
 
 <template name="aceEditor">
 	{{#constant}}
-function(possibleMoves) {
+function(possibleMove) {
 		<div id='aceEditor'>// for example
-function(moves){
-	moves.forEach(function(move){
-		if (move.row === 1 && move.column === 1) {
-			move.weight = 1;
-		}
-	});
+function(move){
+	if (move.row === 1 && move.column === 1) {
+		move.weight = 1;
+	}
 }
 		</div>
 }
