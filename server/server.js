@@ -14,56 +14,47 @@ createGame = function(starter) {
 		{
 			row: 0,
 			column: 0,
-			weight: 0,
-			possibility: 1/9
+			weight: 0
 		},
 		{
 			row: 0,
 			column: 1,
-			weight: 0,
-			possibility: 1/9
+			weight: 0
 		},
 		{
 			row: 0,
 			column: 2,
-			weight: 0,
-			possibility: 1/9
+			weight: 0
 		},
 		{
 			row: 1,
 			column: 0,
-			weight: 0,
-			possibility: 1/9
+			weight: 0
 		},
 		{
 			row: 1,
 			column: 1,
-			weight: 0,
-			possibility: 1/9
+			weight: 0
 		},
 		{
 			row: 1,
 			column: 2,
-			weight: 0,
-			possibility: 1/9
+			weight: 0
 		},
 		{
 			row: 2,
 			column: 0,
-			weight: 0,
-			possibility: 1/9
+			weight: 0
 		},
 		{
 			row: 2,
 			column: 1,
-			weight: 0,
-			possibility: 1/9
+			weight: 0
 		},
 		{
 			row: 2,
 			column: 2,
-			weight: 0,
-			possibility: 1/9
+			weight: 0
 		}
 	];
 
@@ -128,7 +119,7 @@ var checkForWinner = function(gameBoard) {
 	return false;
 };
 
-takeTurn = function(game, scripts) {
+var takeTurn = function(game, scripts) {
 	// !!! potentially want to do a deep clone here
 	var possibleMoves = game.possibleMoves;
 	var board = game.board;
@@ -161,33 +152,9 @@ takeTurn = function(game, scripts) {
 
 	});
 
-	try {
-		// !!! need to check that weight isn't negative
-		// !!! perhaps use a Math.absolute?
-		// find the sum of all the weight
-		var totalWeight = 0;
-		possibleMoves.forEach(function(possibleMove){
-			totalWeight = totalWeight + possibleMove.weight;
-		});
-
-		// if valid totalWeight then recalculate probabilities
-		if (totalWeight > 0) {
-			possibleMoves.forEach(function(possibleMove){
-				possibleMove.probability = possibleMove.weight / totalWeight;
-			});
-		}
-		else { // hard revert back to default probabilities
-			possibleMoves.forEach(function(possibleMove){
-				possibleMove.probability = 1 / possibleMoves.length;
-			});
-		}
-	}
-	catch(e) {
-		// hard revert back to default probabilities
-		possibleMoves.forEach(function(possibleMove){
-			possibleMove.probability = 1 / possibleMoves.length;
-		});
-	}
+	// now that we have run the user's scripts to determine each moves weight
+	// calculate the relative probabilities for each move
+	calculateMoveProbabilities(possibleMoves);
 
 	// now possibleMoves has the correct probability associated with each move
 	var random = Math.random();
@@ -228,6 +195,7 @@ takeTurn = function(game, scripts) {
 	Games.update({_id: game._id}, game);
 
 	// if game is over then start a new game
+	// !!! this seems to have some errors
 	if (game.result) {
 		Games.insert(createGame(game.starter));
 	}
@@ -239,6 +207,8 @@ takeTurn = function(game, scripts) {
 // !!! changed time to stop it from freaking out
 Meteor.startup(function() {
 
+	// !!! probably want to create games only if existing games aren't going on right now
+	// e.g. only on first start up
 	// create a game
 	Games.insert(createGame('x'));
 
@@ -264,6 +234,40 @@ Meteor.startup(function() {
 });
 
 
+
+var calculateMoveProbabilities = function(possibleMoves) {
+	try {
+		// !!! need to check that weight isn't negative
+		// !!! perhaps use a Math.absolute?
+		// find the sum of all the weight
+		var totalWeight = 0;
+		possibleMoves.forEach(function(possibleMove){
+			totalWeight = totalWeight + possibleMove.weight;
+		});
+
+		// if valid totalWeight then recalculate probabilities
+		if (totalWeight > 0) {
+			possibleMoves.forEach(function(possibleMove){
+				possibleMove.probability = possibleMove.weight / totalWeight;
+			});
+		}
+		else { // hard revert back to default probabilities
+			possibleMoves.forEach(function(possibleMove){
+				possibleMove.probability = 1 / possibleMoves.length;
+			});
+		}
+	}
+	catch(e) {
+		// hard revert back to default probabilities
+		possibleMoves.forEach(function(possibleMove){
+			possibleMove.probability = 1 / possibleMoves.length;
+		});
+	}
+
+	//!!! log for debugging
+	// also kind of cool to see
+	// console.log(possibleMoves);
+};
 
 
 
