@@ -237,8 +237,14 @@ Meteor.startup(function() {
 
 var calculateMoveProbabilities = function(possibleMoves) {
 	try {
-		// !!! need to check that weight isn't negative
-		// !!! perhaps use a Math.absolute?
+
+		// hard set weights less than 0 to 0
+		possibleMoves.forEach(function(possibleMove){
+			if (possibleMove.weight < 0) {
+				possibleMove.weight = 0;
+			}
+		});
+
 		// find the sum of all the weight
 		var totalWeight = 0;
 		possibleMoves.forEach(function(possibleMove){
@@ -273,8 +279,12 @@ var calculateMoveProbabilities = function(possibleMoves) {
 
 var tests = [
 	{
-		input: 'hello',
-		output: 'world'
+		input: {
+
+		},
+		output: {
+
+		}
 	}
 ];
 
