@@ -119,6 +119,46 @@ var checkForWinner = function(gameBoard) {
 	return false;
 };
 
+var calculateMoveProbabilities = function(possibleMoves) {
+	try {
+
+		// hard set weights less than 0 to 0
+		possibleMoves.forEach(function(possibleMove){
+			if (possibleMove.weight < 0) {
+				possibleMove.weight = 0;
+			}
+		});
+
+		// find the sum of all the weight
+		var totalWeight = 0;
+		possibleMoves.forEach(function(possibleMove){
+			totalWeight = totalWeight + possibleMove.weight;
+		});
+
+		// if valid totalWeight then recalculate probabilities
+		if (totalWeight > 0) {
+			possibleMoves.forEach(function(possibleMove){
+				possibleMove.probability = possibleMove.weight / totalWeight;
+			});
+		}
+		else { // hard revert back to default probabilities
+			possibleMoves.forEach(function(possibleMove){
+				possibleMove.probability = 1 / possibleMoves.length;
+			});
+		}
+	}
+	catch(e) {
+		// hard revert back to default probabilities
+		possibleMoves.forEach(function(possibleMove){
+			possibleMove.probability = 1 / possibleMoves.length;
+		});
+	}
+
+	//!!! log for debugging
+	// also kind of cool to see
+	// console.log(possibleMoves);
+};
+
 var takeTurn = function(game, scripts) {
 	// !!! potentially want to do a deep clone here
 	var possibleMoves = game.possibleMoves;
@@ -235,47 +275,18 @@ Meteor.startup(function() {
 
 
 
-var calculateMoveProbabilities = function(possibleMoves) {
-	try {
+// we need to test this code before adding the script to the database
 
-		// hard set weights less than 0 to 0
-		possibleMoves.forEach(function(possibleMove){
-			if (possibleMove.weight < 0) {
-				possibleMove.weight = 0;
-			}
-		});
+//try {
+// 	localeval('('+script.logic+')(possibleMove, board)', {possibleMove: possibleMove, board: board});
+// }
+// catch(e) {
+// 	console.log('ERROR: '+e)
+// }
 
-		// find the sum of all the weight
-		var totalWeight = 0;
-		possibleMoves.forEach(function(possibleMove){
-			totalWeight = totalWeight + possibleMove.weight;
-		});
+// we should also do it in a nice way to tell the user what the error is
 
-		// if valid totalWeight then recalculate probabilities
-		if (totalWeight > 0) {
-			possibleMoves.forEach(function(possibleMove){
-				possibleMove.probability = possibleMove.weight / totalWeight;
-			});
-		}
-		else { // hard revert back to default probabilities
-			possibleMoves.forEach(function(possibleMove){
-				possibleMove.probability = 1 / possibleMoves.length;
-			});
-		}
-	}
-	catch(e) {
-		// hard revert back to default probabilities
-		possibleMoves.forEach(function(possibleMove){
-			possibleMove.probability = 1 / possibleMoves.length;
-		});
-	}
-
-	//!!! log for debugging
-	// also kind of cool to see
-	// console.log(possibleMoves);
-};
-
-
+// we should also have a way to organize your own arbitrary test
 
 var tests = [
 	{
