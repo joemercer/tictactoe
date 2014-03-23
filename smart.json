@@ -1,6 +1,7 @@
 {
   "packages": {
     "npm": {},
-    "ace-embed": {}
+    "ace-embed": {},
+    "bootstrap-3": {}
   }
 }

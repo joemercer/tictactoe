@@ -7,6 +7,7 @@ createGame = function(starter) {
 	// spaces indicate that no move has happened yet
 	game.board = [[' ', ' ', ' '],[' ', ' ', ' '],[' ', ' ', ' ']];
 	game.starter = starter;
+	game.startTime = (new Date()).getTime();
 	game.turnCount = 0;
 	game.currentPlayer = starter;
 	game.result = false;
@@ -181,6 +182,8 @@ var takeTurn = function(game, scripts) {
 			// 	 [' ', 'o', ' '],
 			// 	 [' ', 'x', ' ']];
 
+			// !!! need to add a time limit to this
+
 			try {
 				localeval('('+script.logic+')(possibleMove, board)', {possibleMove: possibleMove, board: board});
 			}
@@ -215,18 +218,13 @@ var takeTurn = function(game, scripts) {
 		game.result = winner;
 	}
 
+	// !!! it seems like it declares the game over before the last turn is taken
+
 	// we need to update the game
 	game.possibleMoves.splice(index, 1);
 	game.board[move.row][move.column] = game.currentPlayer;
 	game.turnCount = game.turnCount + 1;
-	var nextPlayer;
-	if (game.currentPlayer === 'x') {
-		nextPlayer = 'o';
-	}
-	else {
-		nextPlayer = 'x';
-	}
-	game.currentPlayer = nextPlayer;
+	game.currentPlayer = getOtherPlayer(game.currentPlayer);
 	if (!game.result && game.possibleMoves.length === 0) {
 		game.result = 't';
 	}
@@ -237,15 +235,33 @@ var takeTurn = function(game, scripts) {
 	// if game is over then start a new game
 	// !!! this seems to have some errors at fast speeds
 	if (game.result) {
-		Games.insert(createGame(game.starter));
+		Meteor.setTimeout(function(){
+			Games.insert(createGame(getOtherPlayer(game.starter)));
+		}, 1*1000);
+		// Games.insert(createGame(game.starter));
 	}
 
 };
+
+var getOtherPlayer = function(player) {
+	if (player === 'x') {
+		return 'o';
+	}
+	if (player === 'o') {
+		return 'x';
+	}
+	console.log('ERROR: getOtherPlayer given improper input');
+	return 'x';
+}
 
 
 
 // !! changed time to stop it from freaking out
 Meteor.startup(function() {
+
+	// !!! every once and a while it seems to get stuck
+	// e.g. not create the next game
+	// that's a bug
 
 	// create the first game
 	// only want one game going on at a time
@@ -286,6 +302,8 @@ Meteor.startup(function() {
 
 
 // !!! we should also have a way to organize your own arbitrary test
+
+// !!! add a time limit test to make sure the code runs in a reasonable length of time
 
 // tests to run against scripts before adding them to the database
 var tests = [

@@ -124,4 +124,28 @@ Template.scripts.scripts = function() {
   return Scripts.find({player: Session.get('player')});
 };
 
+// # board
+// _______
+
+Session.set('winner', null);
+
+Template.board.winner = function() {
+  return Session.get('winner');
+}
+
+Template.board.rows = function() {
+  var game = Games.findOne({},{
+    sort:{startTime:-1}
+  });
+
+  if (game) {
+    if (game.result) {
+      Session.set('winner', game.result);
+    }
+    else {
+      Session.set('winner', null);
+    }
+    return game.board;
+  }
+};
 
