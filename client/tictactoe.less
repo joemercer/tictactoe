@@ -24,6 +24,15 @@
   height: @grid-container-width;
 }
 
+.grid-message {
+	position: absolute;
+	width: @grid-container-width - @grid-spacing - @grid-spacing;
+	height: @grid-container-width - @grid-spacing - @grid-spacing;
+	background-color: yellow;
+	opacity: .5;
+	font-size: 300px;
+}
+
 .grid-row {
   margin-bottom: @grid-spacing;
 
@@ -46,10 +55,14 @@
 
   border-radius: @grid-cell-border-radius;
 
-  background: green;
-
   &:last-child {
     margin-right: 0;
+  }
+
+  background: green;
+
+  .won {
+  	background: yellow;
   }
 
   font-size: 72px;

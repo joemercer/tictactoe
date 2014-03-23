@@ -72,21 +72,18 @@ function(move, board){
 
 <template name="board">
 	<div class="grid-container">
-		<div class="grid-row">
-			<div class="grid-cell">X</div>
-			<div class="grid-cell">O</div>
-			<div class="grid-cell"></div>
-		</div>
-		<div class="grid-row">
-			<div class="grid-cell"></div>
-			<div class="grid-cell">X</div>
-			<div class="grid-cell"></div>
-		</div>
-		<div class="grid-row">
-			<div class="grid-cell"></div>
-			<div class="grid-cell">X</div>
-			<div class="grid-cell"></div>
-		</div>
+		{{#if winner}}
+			<div class="grid-message">
+				<span>{{winner}}</span>
+			</div>
+		{{/if}}
+		{{#each rows}}
+			<div class="grid-row">
+				{{#each this}}
+					<div class="grid-cell">{{this}}</div>
+				{{/each}}
+			</div>
+		{{/each}}
 	</div>
 </template>
 

@@ -7,6 +7,7 @@ createGame = function(starter) {
 	// spaces indicate that no move has happened yet
 	game.board = [[' ', ' ', ' '],[' ', ' ', ' '],[' ', ' ', ' ']];
 	game.starter = starter;
+	game.startTime = (new Date()).getTime();
 	game.turnCount = 0;
 	game.currentPlayer = starter;
 	game.result = false;
@@ -215,18 +216,13 @@ var takeTurn = function(game, scripts) {
 		game.result = winner;
 	}
 
+	// !!! it seems like it declares the game over before the last turn is taken
+
 	// we need to update the game
 	game.possibleMoves.splice(index, 1);
 	game.board[move.row][move.column] = game.currentPlayer;
 	game.turnCount = game.turnCount + 1;
-	var nextPlayer;
-	if (game.currentPlayer === 'x') {
-		nextPlayer = 'o';
-	}
-	else {
-		nextPlayer = 'x';
-	}
-	game.currentPlayer = nextPlayer;
+	game.currentPlayer = getOtherPlayer(game.currentPlayer);
 	if (!game.result && game.possibleMoves.length === 0) {
 		game.result = 't';
 	}
@@ -237,10 +233,24 @@ var takeTurn = function(game, scripts) {
 	// if game is over then start a new game
 	// !!! this seems to have some errors at fast speeds
 	if (game.result) {
-		Games.insert(createGame(game.starter));
+		Meteor.setTimeout(function(){
+			Games.insert(createGame(getOtherPlayer(game.starter)));
+		}, 1*1000);
+		// Games.insert(createGame(game.starter));
 	}
 
 };
+
+var getOtherPlayer = function(player) {
+	if (player === 'x') {
+		return 'o';
+	}
+	if (player === 'o') {
+		return 'x';
+	}
+	console.log('ERROR: getOtherPlayer given improper input');
+	return 'x';
+}
 
 
 
