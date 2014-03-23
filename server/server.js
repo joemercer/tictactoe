@@ -154,13 +154,13 @@ var calculateMoveProbabilities = function(possibleMoves) {
 		});
 	}
 
-	//!!! log for debugging
+	// !! log for debugging
 	// also kind of cool to see
 	// console.log(possibleMoves);
 };
 
 var takeTurn = function(game, scripts) {
-	// !!! potentially want to do a deep clone here
+	// !!? potentially want to do a deep clone here
 	var possibleMoves = game.possibleMoves;
 	var board = game.board;
 
@@ -235,7 +235,7 @@ var takeTurn = function(game, scripts) {
 	Games.update({_id: game._id}, game);
 
 	// if game is over then start a new game
-	// !!! this seems to have some errors
+	// !!! this seems to have some errors at fast speeds
 	if (game.result) {
 		Games.insert(createGame(game.starter));
 	}
@@ -244,13 +244,14 @@ var takeTurn = function(game, scripts) {
 
 
 
-// !!! changed time to stop it from freaking out
+// !! changed time to stop it from freaking out
 Meteor.startup(function() {
 
-	// !!! probably want to create games only if existing games aren't going on right now
-	// e.g. only on first start up
-	// create a game
-	Games.insert(createGame('x'));
+	// create the first game
+	// only want one game going on at a time
+	if (!(Games.find({}).count() > 0)) {
+		Games.insert(createGame('x'));
+	}
 
 	// every second take a turn in every game
 	Meteor.setInterval(function() {
@@ -283,8 +284,6 @@ Meteor.startup(function() {
 
 
 
-
-// !!! we should also do it in a nice way to tell the user what the error is
 
 // !!! we should also have a way to organize your own arbitrary test
 
