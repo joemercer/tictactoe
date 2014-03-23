@@ -275,40 +275,80 @@ Meteor.startup(function() {
 
 
 
-// we need to test this code before adding the script to the database
 
-//try {
-// 	localeval('('+script.logic+')(possibleMove, board)', {possibleMove: possibleMove, board: board});
-// }
-// catch(e) {
-// 	console.log('ERROR: '+e)
-// }
 
-// we should also do it in a nice way to tell the user what the error is
 
-// we should also have a way to organize your own arbitrary test
 
+
+
+
+
+
+// !!! we should also do it in a nice way to tell the user what the error is
+
+// !!! we should also have a way to organize your own arbitrary test
+
+// tests to run against scripts before adding them to the database
 var tests = [
 	{
-		input: {
-
+		possibleMove: {
+			row: 0,
+			column: 0,
+			weight: 0
 		},
-		output: {
-
-		}
+		board: [
+			[' ', ' ', ' '],
+			[' ', ' ', ' '],
+			[' ', ' ', ' ']
+		]
+	},
+	{
+		possibleMove: {
+			row: 2,
+			column: 0,
+			weight: 0
+		},
+		board: [
+			['x', 'x', 'o'],
+			['x', ' ', 'o'],
+			['o', 'o', 'x']
+		]
 	}
 ];
-
-
-
 
 // these are some methods that the client can call
 // but get run on the server
 // so the client can't mess with them
+// 0 => ERROR
+// 1 => SUCCESS
 Meteor.methods({
   insertScript: function(player, logic) {
 
-  	// !!! do some error checking I think
+  	// tests scripts
+  	for (var i=0; i<tests.length; ++i) {
+  		var possibleMove = tests[i].possibleMove;
+  		var board = tests[i].board;
+
+  		try {
+				localeval('('+logic+')(possibleMove, board)', {possibleMove: possibleMove, board: board});
+
+				if (typeof possibleMove.weight !== 'number') {
+					return {
+						error: true,
+						message: 'weight must be a number'
+					};
+				}
+			}
+			catch(e) {
+				// script doesn't work
+				// don't add it to the database
+				// but let user know the error in their ways
+				return {
+					error: true,
+					message: e.toString()
+				};
+			}
+  	};
 
     Scripts.insert({
       player: player,
@@ -316,7 +356,10 @@ Meteor.methods({
       active: true
     });
 
-    return {result: 'worked :)'};
+    return {
+    	error: false,
+    	message: 'SUCCESS'
+    };
   },
   activateScript: function(id) {
   	var script = Scripts.findOne({

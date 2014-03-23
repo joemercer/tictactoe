@@ -71,12 +71,26 @@ Template.newScript.events({
 
     Meteor.apply('insertScript', [Session.get('player'), logic], function(error, result){
 
-      // !!! handle errors
-      // and other things
-      console.log(result);
-    });
+      // error in my code happened
+      if (error) {
+        console.log(error);
+      }
 
-    editor.setValue('the new text here');
+      // error in user script happened
+      if (result.error) {
+        // !!! we should improve this by making it a notification
+        // using bootstrap will be nice
+        console.log('your script had an error:');
+        console.log(result.message);
+      }
+      else {
+        // success!
+
+        // replace the text in the code editor
+        editor.setValue('function(move, board){\n\t\n}');
+      }
+
+    });
   }
 });
 
@@ -96,7 +110,10 @@ Template.scripts.events({
 
     Meteor.apply('activateScript', [this._id], function(error, result){
 
-      // !!! handle errors
+      // error in my code happened
+      if (error) {
+        console.log(error);
+      }
 
     });
 
