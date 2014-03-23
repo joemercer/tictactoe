@@ -26,6 +26,7 @@
 
 <template name="loggedIn">
 	{{> stats}}
+	{{> board}}
 	{{> newScript}}
 	{{> scripts}}
 </template>
@@ -67,5 +68,25 @@ function(move, board){
 			<li>{{logic}} <input class="activate-script" type="button" value="{{active}}" /></li>
 		{{/each}}
 	</ol>
+</template>
+
+<template name="board">
+	<div class="grid-container">
+		<div class="grid-row">
+			<div class="grid-cell">X</div>
+			<div class="grid-cell">O</div>
+			<div class="grid-cell"></div>
+		</div>
+		<div class="grid-row">
+			<div class="grid-cell"></div>
+			<div class="grid-cell">X</div>
+			<div class="grid-cell"></div>
+		</div>
+		<div class="grid-row">
+			<div class="grid-cell"></div>
+			<div class="grid-cell">X</div>
+			<div class="grid-cell"></div>
+		</div>
+	</div>
 </template>
 
