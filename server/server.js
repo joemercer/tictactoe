@@ -182,6 +182,8 @@ var takeTurn = function(game, scripts) {
 			// 	 [' ', 'o', ' '],
 			// 	 [' ', 'x', ' ']];
 
+			// !!! need to add a time limit to this
+
 			try {
 				localeval('('+script.logic+')(possibleMove, board)', {possibleMove: possibleMove, board: board});
 			}
@@ -257,6 +259,10 @@ var getOtherPlayer = function(player) {
 // !! changed time to stop it from freaking out
 Meteor.startup(function() {
 
+	// !!! every once and a while it seems to get stuck
+	// e.g. not create the next game
+	// that's a bug
+
 	// create the first game
 	// only want one game going on at a time
 	if (!(Games.find({}).count() > 0)) {
@@ -296,6 +302,8 @@ Meteor.startup(function() {
 
 
 // !!! we should also have a way to organize your own arbitrary test
+
+// !!! add a time limit test to make sure the code runs in a reasonable length of time
 
 // tests to run against scripts before adding them to the database
 var tests = [
