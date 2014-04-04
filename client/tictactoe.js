@@ -96,7 +96,8 @@ Template.newScript.events({
 
 Template.aceEditor.rendered = function() {
   var editor = ace.edit('aceEditor');
-  editor.setTheme('ace/theme/github');
+  // editor.setTheme('ace/theme/github');
+  editor.setTheme('ace/theme/tomorrow_night');
   editor.getSession().setMode('ace/mode/javascript');
   editor.setHighlightActiveLine(true);
   editor.getSession().setTabSize(2);

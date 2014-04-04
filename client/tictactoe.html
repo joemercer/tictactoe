@@ -8,11 +8,13 @@
 
 <template name="partials">
 
-	{{#if partial 'loggedOut'}}
-		{{> loggedOut}}
-	{{else}} {{#if partial 'loggedIn'}}
-  	{{> loggedIn}}
-  {{/if}} {{/if}}
+	<div class="container">
+		{{#if partial 'loggedOut'}}
+			{{> loggedOut}}
+		{{else}} {{#if partial 'loggedIn'}}
+	  	{{> loggedIn}}
+	  {{/if}} {{/if}}
+	</div>
 
 </template>
 
@@ -25,18 +27,37 @@
 
 
 <template name="loggedIn">
-	{{> stats}}
-	{{> board}}
-	{{> newScript}}
-	{{> scripts}}
+	<div class="row header">
+		<div class="col-sm-8">
+			<h1>Tic Tac Code!</h1>
+			{{> stats}}
+		</div>
+		<div class="col-sm-4">
+			{{> board}}
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-12">
+			{{> newScript}}
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-12">
+			{{> scripts}}
+		</div>
+	</div>
 </template>
 
 <template name="stats">
-	<h1>{{player}}</h1>
-	<h2>Wins: {{wins}}</h2>
-	<h2>Losses: {{losses}}</h2>
-	<h2>Ties: {{ties}}</h2>
-	<h2>Happening: {{happening}}</h2>
+	<div class="col-md-4">
+		<h3>Wins: {{wins}}</h3>
+	</div>
+	<div class="col-md-4">
+		<h3>Losses: {{losses}}</h3>
+	</div>
+	<div class="col-md-4">
+		<h3>Ties: {{ties}}</h3>
+	</div>
 </template>
 
 <template name="newScript">
@@ -73,14 +94,17 @@ function(move, board){
 <template name="board">
 	<div class="grid-container">
 		{{#if winner}}
+			<div class="grid-message-cover">
+				<span></span>
+			</div>
 			<div class="grid-message">
-				<span>{{winner}}</span>
+				{{winner}} won
 			</div>
 		{{/if}}
 		{{#each rows}}
 			<div class="grid-row">
 				{{#each this}}
-					<div class="grid-cell">{{this}}</div>
+					<div class="grid-cell"><div class="grid-cell-message">{{this}}</div></div>
 				{{/each}}
 			</div>
 		{{/each}}

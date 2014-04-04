@@ -1,10 +1,13 @@
+body {
+	background-color: #1F1F1F;
+}
 
 @grid-container-margin-top: 50px;
 @grid-container-background: darkgrey;
 
-@grid-container-width: 500px;
+@grid-container-width: 200px;
 
-@grid-spacing: 15px;
+@grid-spacing: 10px;
 
 @grid-cell-border-radius: 5px;
 
@@ -24,13 +27,26 @@
   height: @grid-container-width;
 }
 
+.grid-message-cover {
+	position: absolute;
+	width: @grid-container-width - @grid-spacing - @grid-spacing;
+	height: @grid-container-width - @grid-spacing - @grid-spacing;
+	border-radius: @grid-cell-border-radius;
+
+	background-color: yellow;
+	opacity: .5;
+}
+
 .grid-message {
 	position: absolute;
 	width: @grid-container-width - @grid-spacing - @grid-spacing;
 	height: @grid-container-width - @grid-spacing - @grid-spacing;
-	background-color: yellow;
-	opacity: .5;
-	font-size: 300px;
+	border-radius: @grid-cell-border-radius;
+
+	text-align: center;
+	vertical-align: middle;
+	line-height: @grid-container-width - @grid-spacing - @grid-spacing;
+	font-size: 85px;
 }
 
 .grid-row {
@@ -53,6 +69,15 @@
   margin-right: @grid-spacing;
   float: left;
 
+  .grid-cell-message {
+  	width: 100%;
+  	height: 100%;
+  	text-align: center;
+		vertical-align: middle;
+		line-height: @grid-cell-width;
+		font-size: 45px;
+  }
+
   border-radius: @grid-cell-border-radius;
 
   &:last-child {
@@ -64,8 +89,6 @@
   .won {
   	background: yellow;
   }
-
-  font-size: 72px;
 }
 
 /*
@@ -95,3 +118,7 @@
     }
   }
 }*/
+
+.header {
+	margin-bottom: @grid-container-margin-top;
+}
