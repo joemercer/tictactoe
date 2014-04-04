@@ -101,6 +101,11 @@ Template.aceEditor.rendered = function() {
   editor.getSession().setMode('ace/mode/javascript');
   editor.setHighlightActiveLine(true);
   editor.getSession().setTabSize(2);
+
+  editor.setOptions({
+    maxLines: 20
+  });
+
 };
 
 // # scripts
