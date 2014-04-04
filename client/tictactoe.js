@@ -65,7 +65,7 @@ Template.stats.happening = function() {
 // ___________
 
 Template.newScript.events({
-  'click input.submit-new-script' : function(e) {
+  'click .submit-new-script' : function(e) {
     var editor = ace.edit('aceEditor');
     var logic = editor.getValue();
 
@@ -112,7 +112,7 @@ Template.aceEditor.rendered = function() {
 // _________
 
 Template.scripts.events({
-  'click input.activate-script' : function(e) {
+  'click .activate-script' : function(e) {
 
     Meteor.apply('activateScript', [this._id], function(error, result){
 
@@ -155,3 +155,7 @@ Template.board.rows = function() {
   }
 };
 
+
+
+// ties being decided a turn too earnly
+// extra moves being played after a "win" is declared

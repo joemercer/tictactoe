@@ -42,9 +42,14 @@
 			{{> newScript}}
 		</div>
 	</div>
-	<div class="row">
+	<div class="scripts-section row">
 		<div class="col-sm-12">
 			{{> scripts}}
+		</div>
+	</div>
+	<div class="info-section row">
+		<div class="col-sm-12">
+			<p>blah blah blah</p>
 		</div>
 	</div>
 </template>
@@ -64,7 +69,7 @@
 <template name="newScript">
 	{{> aceEditor}}
 	<br>
-  <input class="submit-new-script" type="button" value="submit code" />
+  <button class="btn btn-default btn-submit-script submit-new-script">Submit Code</button>
 </template>
 
 <template name="aceEditor">
@@ -85,11 +90,11 @@ function(move, board){
 </template>
 
 <template name="scripts">
-	<ol>
+	<ul class="list-group">
 		{{#each scripts}}
-			<li>{{logic}} <input class="activate-script" type="button" value="{{active}}" /></li>
+			<li class="list-group-item"><button class="btn btn-default activate-script">{{#if active}}Deactivate{{else}}Activate{{/if}}</button> {{logic}}</li>
 		{{/each}}
-	</ol>
+	</ul>
 </template>
 
 <template name="board">
