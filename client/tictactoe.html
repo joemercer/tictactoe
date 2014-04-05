@@ -92,7 +92,7 @@ function(move, board){
 </template>
 
 <template name="scripts">
-	<p>Your scripts pipeline:</p>
+	{{#if count}}<p>Your scripts pipeline:</p>{{/if}}
 	<ol class="list-group">
 		{{#each scripts}}
 			<li class="list-group-item script-list-item">

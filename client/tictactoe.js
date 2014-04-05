@@ -132,6 +132,11 @@ Template.scripts.scripts = function() {
     {sort: {timestamp: -1}}
   );
 };
+Template.scripts.count = function() {
+  return Scripts.find(
+    {player: Session.get('player')}
+  ).count();
+};
 
 // # board
 // _______
