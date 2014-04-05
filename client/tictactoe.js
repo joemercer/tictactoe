@@ -100,6 +100,7 @@ Template.aceEditor.rendered = function() {
   editor.setTheme('ace/theme/tomorrow_night');
   editor.getSession().setMode('ace/mode/javascript');
   editor.setHighlightActiveLine(true);
+  editor.setShowPrintMargin(false);
   editor.getSession().setTabSize(2);
 
   editor.setOptions({
