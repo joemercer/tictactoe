@@ -93,11 +93,20 @@ function(move, board){
 
 <template name="scripts">
 	<p>Your scripts pipeline:</p>
-	<ul class="list-group">
+	<ol class="list-group">
 		{{#each scripts}}
-			<li class="list-group-item script-list-item"><button class="btn btn-default btn-activate-script activate-script {{#if active}}active{{else}}unactive{{/if}}">{{#if active}}Active{{else}}Not Active{{/if}}</button> {{logic}}</li>
+			<li class="list-group-item script-list-item">
+				<div class="row">
+					<div class="col-xs-2 activate-script-wrapper">
+						<button class="btn btn-default btn-activate-script activate-script {{#if active}}active{{else}}unactive{{/if}}">{{#if active}}Active{{else}}Not Active{{/if}}</button>
+					</div>
+					<div class="col-xs-10">
+						 {{logic}}
+					</div>
+				</div>
+			</li>
 		{{/each}}
-	</ul>
+	</ol>
 </template>
 
 <template name="board">
