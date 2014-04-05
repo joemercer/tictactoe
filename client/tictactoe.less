@@ -132,6 +132,16 @@ body {
 	.title {
 		font-size: 58px;
 	}
+
+	.teal {
+		color: #8ABEB7;
+	}
+	.orange {
+		color: #DE935F;
+	}
+	.yellow {
+		color: #B5BD68;
+	}
 }
 
 
@@ -173,6 +183,30 @@ body {
 	margin-top: 25px;
 }
 
+.btn-activate-script {
+
+	&.active {
+		background-color: #B294BB;
+		&:hover {
+			background-color: darken(#B294BB, 10%);
+		}
+	}
+	&.unactive {
+		background-color: #DE935F;
+		&:hover {
+			background-color: darken(#DE935F, 10%);
+		}
+	}
+}
+
 .info-section {
 	color: #C5C8C6;
+
+	a {
+		color: #8ABEB7;
+
+		&:hover {
+			color: darken(#8ABEB7, 15%);
+		}
+	}
 }

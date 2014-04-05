@@ -49,20 +49,22 @@
 	</div>
 	<div class="info-section row">
 		<div class="col-sm-12">
-			<p>blah blah blah</p>
+			<p>HOW TO PLAY: Each turn, each possible move remaining on the board is run through your pipeline of scripts. The move that is eventually applied is randomly chosen, but each script can modify move.weight which is used to create the probability distribution that the applied move is chosen from.</p>
+			<hr>
+			<p>Created by <a href="https://twitter.com/jomrcr">@jomrcr</a> with <a href="https://www.meteor.com/">Meteor</a>. View the code on <a href="https://github.com/joemercer/tictactoe">Github</a>. Have fun :) </p>
 		</div>
 	</div>
 </template>
 
 <template name="stats">
 	<div class="col-md-4">
-		<h3>Wins: {{wins}}</h3>
+		<h3 class="teal">Wins: {{wins}}</h3>
 	</div>
 	<div class="col-md-4">
-		<h3>Losses: {{losses}}</h3>
+		<h3 class="orange">Losses: {{losses}}</h3>
 	</div>
 	<div class="col-md-4">
-		<h3>Ties: {{ties}}</h3>
+		<h3 class="yellow">Ties: {{ties}}</h3>
 	</div>
 </template>
 
@@ -92,7 +94,7 @@ function(move, board){
 <template name="scripts">
 	<ul class="list-group">
 		{{#each scripts}}
-			<li class="list-group-item"><button class="btn btn-default activate-script">{{#if active}}Deactivate{{else}}Activate{{/if}}</button> {{logic}}</li>
+			<li class="list-group-item"><button class="btn btn-default btn-activate-script activate-script {{#if active}}active{{else}}unactive{{/if}}">{{#if active}}Active{{else}}Not Active{{/if}}</button> {{logic}}</li>
 		{{/each}}
 	</ul>
 </template>
