@@ -127,7 +127,10 @@ Template.scripts.events({
 });
 
 Template.scripts.scripts = function() {
-  return Scripts.find({player: Session.get('player')});
+  return Scripts.find(
+    {player: Session.get('player')},
+    {sort: {timestamp: -1}}
+  );
 };
 
 // # board

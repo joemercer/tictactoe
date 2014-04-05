@@ -370,7 +370,8 @@ Meteor.methods({
     Scripts.insert({
       player: player,
       logic: logic,
-      active: true
+      active: true,
+      timestamp: (new Date()).getTime()
     });
 
     return {
