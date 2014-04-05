@@ -3,9 +3,9 @@
 // __________
 
 // set up the partials logic
-// Session.set('partial', 'loggedOut');
+Session.set('partial', 'loggedOut');
 // !!!
-Session.set('partial', 'loggedIn');
+// Session.set('partial', 'loggedIn');
 
 Template.partials.helpers({
   partial: function(partialName) {
@@ -16,9 +16,9 @@ Template.partials.helpers({
 // # loggedOut
 // ___________
 
-// Session.set('player', null);
+Session.set('player', null);
 // !!!
-Session.set('player', 'x');
+// Session.set('player', 'x');
 
 Template.loggedOut.events({
   'click #login-x': function(e) {
