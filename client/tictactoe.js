@@ -40,7 +40,15 @@ Template.loggedOut.events({
 // # startButton
 // _______
 
+// pull whether or not there is an existing game from the server
 Session.set('gameInProgress', false);
+Meteor.apply('getGameInProgress', [], function(error, result){
+  if (error) {
+    console.log('Error starting game:', error);
+  }
+
+  Session.set('gameInProgress', result);
+});
 
 // pull the current game's start time from the server
 Session.set('gameStartTime', false);

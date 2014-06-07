@@ -1,6 +1,7 @@
 var localeval = Meteor.require('localeval');
 
 // settings
+// !!! need to change this to the right value
 var gamesNeededToWin = 5;
 var turnsPerSecond = .1;
 
@@ -392,9 +393,12 @@ Meteor.methods({
 	getGameStartTime: function() {
 		return gameStartTime;
 	},
+	getGameInProgress: function() {
+		return gameInProgress;
+	},
 	reset: function() {
-		// if no game is going
-		// then start a new game
+		// !!! TODO(joe) implement this
+		// reset button for if things go south
 	},
   insertScript: function(player, logic) {
 
