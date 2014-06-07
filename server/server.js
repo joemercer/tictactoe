@@ -5,6 +5,9 @@ var localeval = Meteor.require('localeval');
 var gamesNeededToWin = 5;
 var turnsPerSecond = .1;
 
+// amount of time scripts have to run (in milliseconds)
+var scriptTimeLimit = 50;
+
 // NOTE: game sometimes refers to an individual match, sometimes a best of series
 // sorry
 
@@ -223,10 +226,15 @@ var takeTurn = function(game, scripts) {
 			// !!! need to add a time limit to this
 
 			try {
-				localeval('('+script.logic+')(possibleMove, board)', {possibleMove: possibleMove, board: board});
+				localeval('('+script.logic+')(possibleMove, board)', {possibleMove: possibleMove, board: board}, scriptTimeLimit, function(error, result){
+						if (error) {
+							console.log('localeval caught an error');
+							console.log('ERROR: '+error);
+						}
+				});
 			}
 			catch(e) {
-				console.log('ERROR: '+e)
+				console.log('ERROR: '+e);
 			}
 
 		});
@@ -402,42 +410,63 @@ Meteor.methods({
 	},
   insertScript: function(player, logic) {
 
-  	// tests scripts
-  	for (var i=0; i<tests.length; ++i) {
-  		var possibleMove = tests[i].possibleMove;
-  		var board = tests[i].board;
-
-  		try {
-				localeval('('+logic+')(possibleMove, board)', {possibleMove: possibleMove, board: board});
-
-				if (typeof possibleMove.weight !== 'number') {
-					return {
-						error: true,
-						message: 'weight must be a number'
-					};
-				}
-			}
-			catch(e) {
-				// script doesn't work
-				// don't add it to the database
-				// but let user know the error in their ways
-				return {
-					error: true,
-					message: e.toString()
-				};
-			}
-  	};
-
-    Scripts.insert({
+		var id = Scripts.insert({
       player: player,
       logic: logic,
       active: true,
       timestamp: (new Date()).getTime()
     });
 
+  	// check the script by running it through some test cases
+  	for (var i=0; i<tests.length; ++i) {
+  		var possibleMove = tests[i].possibleMove;
+  		var board = tests[i].board;
+
+  		try {
+
+				localeval('('+logic+')(possibleMove, board)', {possibleMove: possibleMove, board: board}, scriptTimeLimit, Meteor.bindEnvironment(function(error, result){
+					if (error) {
+						console.log('localeval tests caught error');
+						console.log('ERROR: '+error.message);
+
+						Scripts.remove({
+				      _id: id
+				    });
+					}
+					if (typeof possibleMove.weight !== 'number') {
+						console.log('localeval tests caught error');
+						console.log('ERROR: possible weight must be a number');
+
+						Scripts.remove({
+				      _id: id
+				    });
+					}
+				}, function(e){
+					console.log('Meteor.bindEnvironment has an error');
+					console.log('ERROR: '+e);
+					done = true;
+				}));
+
+			}
+			catch(e) {
+				// script doesn't work
+				// remove it from the database
+				Scripts.remove({
+		      _id: id
+		    });
+
+				// let user know the error in their ways
+				return {
+					error: true,
+					message: e.toString()
+				};
+			}
+
+  	};
+
     return {
     	error: false,
-    	message: 'SUCCESS'
+    	message: 'SUCCESS - but we\'ll revoke it if your script doesn\'t pass the tests'
     };
   },
   activateScript: function(id) {
