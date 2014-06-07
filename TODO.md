@@ -4,11 +4,12 @@
 
 
 - style the intro page (just a little bit)
-
 - add just a little transition to the animation
 
 - games take one additional turn after finishing
 - games that end in a win on the last turn end up counting as a tie
+
+
 
 
 

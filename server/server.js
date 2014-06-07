@@ -324,21 +324,9 @@ var getOtherPlayer = function(player) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-// !!! we should also have a way to organize your own arbitrary test
-
-// !!! add a time limit test to make sure the code runs in a reasonable length of time
+// # Tests
+// - run these against each new script as it comes in
+// ________
 
 // tests to run against scripts before adding them to the database
 var tests = [
@@ -410,6 +398,8 @@ Meteor.methods({
 	},
   insertScript: function(player, logic) {
 
+  	// assume the script is fine and insert it
+  	// if it doesn't pass the tests then we'll just revoke it
 		var id = Scripts.insert({
       player: player,
       logic: logic,
@@ -425,6 +415,8 @@ Meteor.methods({
   		try {
 
 				localeval('('+logic+')(possibleMove, board)', {possibleMove: possibleMove, board: board}, scriptTimeLimit, Meteor.bindEnvironment(function(error, result){
+
+					// if localeval caught an error
 					if (error) {
 						console.log('localeval tests caught error');
 						console.log('ERROR: '+error.message);
@@ -433,6 +425,8 @@ Meteor.methods({
 				      _id: id
 				    });
 					}
+
+					// we require the weight to be numerical
 					if (typeof possibleMove.weight !== 'number') {
 						console.log('localeval tests caught error');
 						console.log('ERROR: possible weight must be a number');
@@ -449,6 +443,7 @@ Meteor.methods({
 
 			}
 			catch(e) {
+				// some other error happened
 				// script doesn't work
 				// remove it from the database
 				Scripts.remove({
