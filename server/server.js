@@ -4,8 +4,12 @@ var localeval = Meteor.require('localeval');
 var gamesNeededToWin = 5;
 var turnsPerSecond = .1;
 
+// NOTE: game sometimes refers to an individual match, sometimes a best of series
+// sorry
+
 // indicates whether a game is currently being played on the client
 var gameInProgress = false;
+var gameStartTime = false;
 
 // create a new game
 createGame = function(starter) {
@@ -77,7 +81,7 @@ var startTakingTurns = function() {
 	// every tenth of a second take a turn in every game
 	turnTakingInterval = Meteor.setInterval(function() {
 
-		Games.find({result: false}).forEach(function(game){
+		Games.find({result: false, startTime: {$gt: gameStartTime}}).forEach(function(game){
 
 			var scripts = Scripts.find({
 				player: game.currentPlayer,
@@ -271,16 +275,19 @@ var takeTurn = function(game, scripts) {
 
 		// if we've reached the maximum number of games then stop
 		// and don't need to keep trying to run turns on the server
-		if (Games.find({result: 't'}).count() >= gamesNeededToWin) {
+		if (Games.find({result: 't', startTime: {$gt: gameStartTime}}).count() >= gamesNeededToWin) {
 			Meteor.clearInterval(turnTakingInterval);
+			gameInProgress = false;
 			return;
 		}
-		else if (Games.find({result: 'x'}).count() >= gamesNeededToWin) {
+		else if (Games.find({result: 'x', startTime: {$gt: gameStartTime}}).count() >= gamesNeededToWin) {
 			Meteor.clearInterval(turnTakingInterval);
+			gameInProgress = false;
 			return;
 		}
-		else if (Games.find({result: 'o'}).count() >= gamesNeededToWin) {
+		else if (Games.find({result: 'o', startTime: {$gt: gameStartTime}}).count() >= gamesNeededToWin) {
 			Meteor.clearInterval(turnTakingInterval);
+			gameInProgress = false;
 			return;
 		}
 		else {
@@ -369,13 +376,21 @@ Meteor.methods({
 			};
 		}
 
+		// include an offset to give us a little fudge room
+		var time = (new Date()).getTime() - 1000;
+
 		// start a new game
 		Games.insert(createGame('x'));
 		startTakingTurns();
 		gameInProgress = true;
+		gameStartTime = time;
 		return {
-			message: 'success'
+			message: 'success',
+			gameStartTime: time
 		};
+	},
+	getGameStartTime: function() {
+		return gameStartTime;
 	},
 	reset: function() {
 		// if no game is going

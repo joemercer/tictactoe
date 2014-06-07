@@ -9,6 +9,8 @@
 
 - games need a timestamp. ugh. all queries need to reflect this
 
+- on start in client we need to not show start game if game is going.
+
 - style the intro page (just a little bit)
 
 - add just a little transition to the animation

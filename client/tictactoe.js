@@ -42,6 +42,16 @@ Template.loggedOut.events({
 
 Session.set('gameInProgress', false);
 
+// pull the current game's start time from the server
+Session.set('gameStartTime', false);
+Meteor.apply('getGameStartTime', [], function(error, result){
+  if (error) {
+    console.log('Error starting game:', error);
+  }
+
+  Session.set('gameStartTime', result);
+});
+
 Template.startButton.events({
   'click .start-game' : function(e) {
     if (Session.get('gameInProgress')) {
@@ -55,10 +65,12 @@ Template.startButton.events({
       if (result.error) {
         console.log('Error starting game:', result.message);
       }
-    });
 
-    // update the ui
-    Session.set('gameInProgress', !Session.get('gameInProgress'));
+      Session.set('gameStartTime', result.gameStartTime);
+
+      // update the ui
+      Session.set('gameInProgress', true);
+    });
   }
 });
 
@@ -75,7 +87,8 @@ Template.stats.player = function() {
   return Session.get('player');
 };
 Template.stats.wins = function() {
-  var wins = Games.find({result: Session.get('player')}).count();
+  var gameStartTime = Session.get('gameStartTime');
+  var wins = Games.find({result: Session.get('player'), startTime: {$gt: gameStartTime}}).count();
   if (wins >= gamesNeededToWin) {
     Session.set('gameInProgress', false);
   }
@@ -89,21 +102,24 @@ Template.stats.losses = function() {
   else {
     opponent = 'x';
   }
-  var losses = Games.find({result: opponent}).count();
+  var gameStartTime = Session.get('gameStartTime');
+  var losses = Games.find({result: opponent, startTime: {$gt: gameStartTime}}).count();
   if (losses >= gamesNeededToWin) {
     Session.set('gameInProgress', false);
   }
   return losses;
 };
 Template.stats.ties = function() {
-  var ties = Games.find({result: 't'}).count();
+  var gameStartTime = Session.get('gameStartTime');
+  var ties = Games.find({result: 't', startTime: {$gt: gameStartTime}}).count();
   if (ties >= gamesNeededToWin) {
     Session.set('gameInProgress', false);
   }
   return ties;
 };
 Template.stats.happening = function() {
-  return Games.find({result: false}).count();
+  var gameStartTime = Session.get('gameStartTime');
+  return Games.find({result: false, startTime: {$gt: gameStartTime}}).count();
 };
 
 
@@ -195,9 +211,11 @@ Template.board.winner = function() {
 }
 
 Template.board.rows = function() {
-  var game = Games.findOne({},{
-    sort:{startTime:-1}
-  });
+  var gameStartTime = Session.get('gameStartTime');
+  var game = Games.findOne(
+    {startTime: {$gt: gameStartTime}},
+    {sort:{startTime:-1}}
+  );
 
   if (game) {
     if (game.result) {
