@@ -1,5 +1,12 @@
 var localeval = Meteor.require('localeval');
 
+// settings
+var gamesNeededToWin = 5;
+var turnsPerSecond = .1;
+
+// indicates whether a game is currently being played on the client
+var gameInProgress = false;
+
 // create a new game
 createGame = function(starter) {
 	var game = {};
@@ -60,6 +67,32 @@ createGame = function(starter) {
 	];
 
   return game;
+};
+
+// starts the interval on the server to take turns
+// stores the interval id in a variable so it can be stopped later
+var turnTakingInterval;
+var startTakingTurns = function() {
+
+	// every tenth of a second take a turn in every game
+	turnTakingInterval = Meteor.setInterval(function() {
+
+		Games.find({result: false}).forEach(function(game){
+
+			var scripts = Scripts.find({
+				player: game.currentPlayer,
+				active: true
+			}).fetch();
+
+			if (!scripts) {
+				scripts = [];
+			}
+
+			takeTurn(game, scripts);
+
+		});
+
+	}, turnsPerSecond*1000);
 };
 
 // check for a winner to a game
@@ -155,13 +188,13 @@ var calculateMoveProbabilities = function(possibleMoves) {
 		});
 	}
 
-	// !! log for debugging
+	// !!! log for debugging
 	// also kind of cool to see
 	// console.log(possibleMoves);
 };
 
 var takeTurn = function(game, scripts) {
-	// !!? potentially want to do a deep clone here
+	// !!!? potentially want to do a deep clone here
 	var possibleMoves = game.possibleMoves;
 	var board = game.board;
 
@@ -235,10 +268,28 @@ var takeTurn = function(game, scripts) {
 	// if game is over then start a new game
 	// !!! this seems to have some errors at fast speeds
 	if (game.result) {
-		Meteor.setTimeout(function(){
-			Games.insert(createGame(getOtherPlayer(game.starter)));
-		}, 1*1000);
-		// Games.insert(createGame(game.starter));
+
+		// if we've reached the maximum number of games then stop
+		// and don't need to keep trying to run turns on the server
+		if (Games.find({result: 't'}).count() >= gamesNeededToWin) {
+			Meteor.clearInterval(turnTakingInterval);
+			return;
+		}
+		else if (Games.find({result: 'x'}).count() >= gamesNeededToWin) {
+			Meteor.clearInterval(turnTakingInterval);
+			return;
+		}
+		else if (Games.find({result: 'o'}).count() >= gamesNeededToWin) {
+			Meteor.clearInterval(turnTakingInterval);
+			return;
+		}
+		else {
+			// else start a new game
+
+			Meteor.setTimeout(function(){
+				Games.insert(createGame(getOtherPlayer(game.starter)));
+			}, 1*1000);
+		}
 	}
 
 };
@@ -256,39 +307,7 @@ var getOtherPlayer = function(player) {
 
 
 
-// !! changed time to stop it from freaking out
-Meteor.startup(function() {
 
-	// !!! every once and a while it seems to get stuck
-	// e.g. not create the next game
-	// that's a bug
-
-	// create the first game
-	// only want one game going on at a time
-	if (!(Games.find({}).count() > 0)) {
-		Games.insert(createGame('x'));
-	}
-
-	// every second take a turn in every game
-	Meteor.setInterval(function() {
-
-		Games.find({result: false}).forEach(function(game){
-
-			var scripts = Scripts.find({
-				player: game.currentPlayer,
-				active: true
-			}).fetch();
-
-			if (!scripts) {
-				scripts = [];
-			}
-
-			takeTurn(game, scripts);
-
-		});
-
-	}, .1*1000);
-});
 
 
 
@@ -333,12 +352,35 @@ var tests = [
 	}
 ];
 
+
+
 // these are some methods that the client can call
 // but get run on the server
 // so the client can't mess with them
 // 0 => ERROR
 // 1 => SUCCESS
 Meteor.methods({
+	startGame: function() {
+
+		if (gameInProgress) {
+			return {
+				error: true,
+				message: 'there is already a game in progress'
+			};
+		}
+
+		// start a new game
+		Games.insert(createGame('x'));
+		startTakingTurns();
+		gameInProgress = true;
+		return {
+			message: 'success'
+		};
+	},
+	reset: function() {
+		// if no game is going
+		// then start a new game
+	},
   insertScript: function(player, logic) {
 
   	// tests scripts

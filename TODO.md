@@ -4,6 +4,11 @@
 - someone has to press start again to get it to work
 - organize scripts from newest to oldest
 
+- needs to respond back to the client if the game is over
+- so we can update ui
+
+- games need a timestamp. ugh. all queries need to reflect this
+
 - style the intro page (just a little bit)
 
 - add just a little transition to the animation

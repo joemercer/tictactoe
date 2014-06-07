@@ -41,7 +41,20 @@ Session.set('gameInProgress', false);
 
 Template.startButton.events({
   'click .start-game' : function(e) {
-    // !!! probably want to show nothing here when actual game in progress
+    if (Session.get('gameInProgress')) {
+      return;
+    }
+
+    Meteor.apply('startGame', [], function(error, result){
+      if (error) {
+        console.log('Error starting game:', error);
+      }
+      if (result.error) {
+        console.log('Error starting game:', result.error);
+      }
+    });
+
+    // update the ui
     Session.set('gameInProgress', !Session.get('gameInProgress'));
   }
 });
