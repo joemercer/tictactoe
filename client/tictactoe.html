@@ -32,6 +32,8 @@
 	<div class="row header">
 		<div class="col-sm-8">
 			<h1 class="title">Tic Tac Code!</h1>
+			{{> startButton}}
+			<br/>
 			{{> stats}}
 		</div>
 		<div class="col-sm-4">
@@ -66,6 +68,18 @@
 	</div>
 	<div class="col-md-4">
 		<h3 class="yellow">Ties: {{ties}}</h3>
+	</div>
+</template>
+
+<template name="startButton">
+	<div class="col-md-12">
+		<p>First to 500 wins!&nbsp;&nbsp;&nbsp;&nbsp;<button class="btn btn-default start-game">
+			{{#if gameInProgress}}
+				Game In Progress
+			{{else}}
+				Start Game
+			{{/if}}
+		</button></p>
 	</div>
 </template>
 

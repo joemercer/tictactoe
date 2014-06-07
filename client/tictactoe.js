@@ -5,7 +5,7 @@
 // set up the partials logic
 Session.set('partial', 'loggedOut');
 // !!!
-// Session.set('partial', 'loggedIn');
+Session.set('partial', 'loggedIn');
 
 Template.partials.helpers({
   partial: function(partialName) {
@@ -18,7 +18,7 @@ Template.partials.helpers({
 
 Session.set('player', null);
 // !!!
-// Session.set('player', 'x');
+Session.set('player', 'x');
 
 Template.loggedOut.events({
   'click #login-x': function(e) {
@@ -33,6 +33,24 @@ Template.loggedOut.events({
 
 // # loggedIn
 // __________
+
+// # startButton
+// _______
+
+Session.set('gameInProgress', false);
+
+Template.startButton.events({
+  'click .start-game' : function(e) {
+    // !!! probably want to show nothing here when actual game in progress
+    Session.set('gameInProgress', !Session.get('gameInProgress'));
+  }
+});
+
+Template.startButton.gameInProgress = function() {
+  return Session.get('gameInProgress');
+};
+
+
 
 // # stats
 // _______
