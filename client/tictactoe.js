@@ -1,4 +1,7 @@
 
+// settings
+var gamesNeededToWin = 5;
+
 // # partials
 // __________
 
@@ -50,7 +53,7 @@ Template.startButton.events({
         console.log('Error starting game:', error);
       }
       if (result.error) {
-        console.log('Error starting game:', result.error);
+        console.log('Error starting game:', result.message);
       }
     });
 
@@ -72,7 +75,11 @@ Template.stats.player = function() {
   return Session.get('player');
 };
 Template.stats.wins = function() {
-  return Games.find({result: Session.get('player')}).count();
+  var wins = Games.find({result: Session.get('player')}).count();
+  if (wins >= gamesNeededToWin) {
+    Session.set('gameInProgress', false);
+  }
+  return wins;
 };
 Template.stats.losses = function() {
   var opponent;
@@ -82,10 +89,18 @@ Template.stats.losses = function() {
   else {
     opponent = 'x';
   }
-  return Games.find({result: opponent}).count();
+  var losses = Games.find({result: opponent}).count();
+  if (losses >= gamesNeededToWin) {
+    Session.set('gameInProgress', false);
+  }
+  return losses;
 };
 Template.stats.ties = function() {
-  return Games.find({result: 't'}).count();
+  var ties = Games.find({result: 't'}).count();
+  if (ties >= gamesNeededToWin) {
+    Session.set('gameInProgress', false);
+  }
+  return ties;
 };
 Template.stats.happening = function() {
   return Games.find({result: false}).count();
