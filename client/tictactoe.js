@@ -43,50 +43,29 @@ Template.loggedOut.events({
 // # startButton
 // _______
 
-// pull whether or not there is an existing game from the server
-Session.set('gameInProgress', false);
-Meteor.apply('getGameInProgress', [], function(error, result){
-  if (error) {
-    console.log('Error starting game:', error);
-  }
-
-  Session.set('gameInProgress', result);
-});
-
-// pull the current game's start time from the server
-Session.set('gameStartTime', false);
-Meteor.apply('getGameStartTime', [], function(error, result){
-  if (error) {
-    console.log('Error starting game:', error);
-  }
-
-  Session.set('gameStartTime', result);
-});
-
 Template.startButton.events({
   'click .start-game' : function(e) {
-    if (Session.get('gameInProgress')) {
-      return;
+
+    var series = Series.findOne({active: true}, {sort: {startTime: -1}});
+    if (series) {
+      return; // series already in progress
     }
 
-    Meteor.apply('startGame', [], function(error, result){
+    Meteor.apply('startSeries', [], function(error, result){
       if (error) {
         console.log('Error starting game:', error);
       }
       if (result.error) {
         console.log('Error starting game:', result.message);
       }
-
-      Session.set('gameStartTime', result.gameStartTime);
-
-      // update the ui
-      Session.set('gameInProgress', true);
     });
+
   }
 });
 
 Template.startButton.gameInProgress = function() {
-  return Session.get('gameInProgress');
+  var series = Series.findOne({active: true}, {sort: {startTime: -1}});
+  return !!series;
 };
 
 
@@ -98,11 +77,13 @@ Template.stats.player = function() {
   return Session.get('player');
 };
 Template.stats.wins = function() {
-  var gameStartTime = Session.get('gameStartTime');
-  var wins = Games.find({result: Session.get('player'), startTime: {$gt: gameStartTime}}).count();
-  if (wins >= gamesNeededToWin) {
-    Session.set('gameInProgress', false);
+  var seriesStartTime = 0;
+  var series = Series.findOne({active: true}, {sort: {startTime: -1}});
+  if (series) {
+    seriesStartTime = series.startTime;
   }
+
+  var wins = Games.find({result: Session.get('player'), startTime: {$gt: seriesStartTime}}).count();
   return wins;
 };
 Template.stats.losses = function() {
@@ -113,24 +94,34 @@ Template.stats.losses = function() {
   else {
     opponent = 'x';
   }
-  var gameStartTime = Session.get('gameStartTime');
-  var losses = Games.find({result: opponent, startTime: {$gt: gameStartTime}}).count();
-  if (losses >= gamesNeededToWin) {
-    Session.set('gameInProgress', false);
+  
+  var seriesStartTime = 0;
+  var series = Series.findOne({active: true}, {sort: {startTime: -1}});
+  if (series) {
+    seriesStartTime = series.startTime;
   }
+
+  var losses = Games.find({result: opponent, startTime: {$gt: seriesStartTime}}).count();
   return losses;
 };
 Template.stats.ties = function() {
-  var gameStartTime = Session.get('gameStartTime');
-  var ties = Games.find({result: 't', startTime: {$gt: gameStartTime}}).count();
-  if (ties >= gamesNeededToWin) {
-    Session.set('gameInProgress', false);
+  var seriesStartTime = 0;
+  var series = Series.findOne({active: true}, {sort: {startTime: -1}});
+  if (series) {
+    seriesStartTime = series.startTime;
   }
+
+  var ties = Games.find({result: 't', startTime: {$gt: seriesStartTime}}).count();
   return ties;
 };
 Template.stats.happening = function() {
-  var gameStartTime = Session.get('gameStartTime');
-  return Games.find({result: false, startTime: {$gt: gameStartTime}}).count();
+  var seriesStartTime = 0;
+  var series = Series.findOne({active: true}, {sort: {startTime: -1}});
+  if (series) {
+    seriesStartTime = series.startTime;
+  }
+
+  return Games.find({result: false, startTime: {$gt: seriesStartTime}}).count();
 };
 
 
@@ -168,7 +159,8 @@ Template.newScript.events({
 });
 
 Template.newScript.gameInProgress = function() {
-  return Session.get('gameInProgress');
+  var series = Series.findOne({active: true}, {sort: {startTime: -1}});
+  return !!series;
 };
 
 Template.aceEditor.rendered = function() {
@@ -205,16 +197,26 @@ Template.scripts.events({
 });
 
 Template.scripts.scripts = function() {
-  var gameStartTime = Session.get('gameStartTime');
+  var seriesStartTime = 0;
+  var series = Series.findOne({active: true}, {sort: {startTime: -1}});
+  if (series) {
+    seriesStartTime = series.startTime;
+  }
+
   return Scripts.find(
-    {player: Session.get('player'), timestamp: {$gt: gameStartTime}},
+    {player: Session.get('player'), timestamp: {$gt: seriesStartTime}},
     {sort: {timestamp: -1}}
   );
 };
 Template.scripts.count = function() {
-  var gameStartTime = Session.get('gameStartTime');
+  var seriesStartTime = 0;
+  var series = Series.findOne({active: true}, {sort: {startTime: -1}});
+  if (series) {
+    seriesStartTime = series.startTime;
+  }
+
   return Scripts.find(
-    {player: Session.get('player'), timestamp: {$gt: gameStartTime}}
+    {player: Session.get('player'), timestamp: {$gt: seriesStartTime}}
   ).count();
 };
 
@@ -228,9 +230,14 @@ Template.board.winner = function() {
 }
 
 Template.board.rows = function() {
-  var gameStartTime = Session.get('gameStartTime');
+  var seriesStartTime = 0;
+  var series = Series.findOne({active: true}, {sort: {startTime: -1}});
+  if (series) {
+    seriesStartTime = series.startTime;
+  }
+
   var game = Games.findOne(
-    {startTime: {$gt: gameStartTime}},
+    {startTime: {$gt: seriesStartTime}},
     {sort:{startTime:-1}}
   );
 

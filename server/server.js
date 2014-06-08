@@ -3,7 +3,7 @@ var localeval = Meteor.require('localeval');
 // settings
 // !!! need to change this to the right value
 var gamesNeededToWin = 5;
-var turnsPerSecond = .5; // seconds
+var turnsPerSecond = .1; // seconds
 var startNewGameLag = 1; // second
 
 // amount of time scripts have to run (in milliseconds)
@@ -12,9 +12,7 @@ var scriptTimeLimit = 100;
 // NOTE: game sometimes refers to an individual match, sometimes a best of series
 // sorry
 
-// indicates whether a game is currently being played on the client
-var gameInProgress = false;
-var gameStartTime = false;
+
 
 // create a new game
 createGame = function(starter) {
@@ -86,11 +84,18 @@ var startTakingTurns = function() {
 	// every tenth of a second take a turn in every game
 	turnTakingInterval = Meteor.setInterval(function() {
 
-		Games.find({result: false, startTime: {$gt: gameStartTime}}).forEach(function(game){
+		var seriesStartTime = 0;
+		var series = Series.findOne({active: true}, {sort: {startTime: -1}});
+		if (series) {
+			seriesStartTime = series.startTime;
+		}
+
+		Games.find({result: false, startTime: {$gt: seriesStartTime}}).forEach(function(game){
 
 			var scripts = Scripts.find({
 				player: game.currentPlayer,
-				active: true
+				active: true,
+				timestamp: {$gt: seriesStartTime}
 			}).fetch();
 
 			if (!scripts) {
@@ -280,21 +285,33 @@ var takeTurn = function(game, scripts) {
 	// !!! this seems to have some errors at fast speeds
 	if (game.result) {
 
+		var seriesStartTime = 0;
+		var series = Series.findOne({active: true}, {sort: {startTime: -1}});
+		if (series) {
+			seriesStartTime = series.startTime;
+		}
+
 		// if we've reached the maximum number of games then stop
 		// and no need to keep trying to run turns on the server
-		if (Games.find({result: 't', startTime: {$gt: gameStartTime}}).count() >= gamesNeededToWin) {
+		if (Games.find({result: 't', startTime: {$gt: seriesStartTime}}).count() >= gamesNeededToWin) {
 			Meteor.clearInterval(turnTakingInterval);
-			gameInProgress = false;
+			series.winner = 't';
+			series.active = false;
+			Series.update({_id: series._id}, series);
 			return;
 		}
-		else if (Games.find({result: 'x', startTime: {$gt: gameStartTime}}).count() >= gamesNeededToWin) {
+		else if (Games.find({result: 'x', startTime: {$gt: seriesStartTime}}).count() >= gamesNeededToWin) {
 			Meteor.clearInterval(turnTakingInterval);
-			gameInProgress = false;
+			series.winner = 'x';
+			series.active = false;
+			Series.update({_id: series._id}, series);
 			return;
 		}
-		else if (Games.find({result: 'o', startTime: {$gt: gameStartTime}}).count() >= gamesNeededToWin) {
+		else if (Games.find({result: 'o', startTime: {$gt: seriesStartTime}}).count() >= gamesNeededToWin) {
 			Meteor.clearInterval(turnTakingInterval);
-			gameInProgress = false;
+			series.winner = 'o';
+			series.active = false;
+			Series.update({_id: series._id}, series);
 			return;
 		}
 		else {
@@ -362,9 +379,9 @@ var tests = [
 // 0 => ERROR
 // 1 => SUCCESS
 Meteor.methods({
-	startGame: function() {
+	startSeries: function() {
 
-		if (gameInProgress) {
+		if (Series.find({active: true}).count() > 0) {
 			return {
 				error: true,
 				message: 'there is already a game in progress'
@@ -374,21 +391,20 @@ Meteor.methods({
 		// include an offset to give us a little fudge room
 		var time = (new Date()).getTime() - 1000;
 
+		// start a series
+		// include another offset for fudge room
+		Series.insert({
+			active: true,
+			startTime: time - 1000,
+			winner: false
+		});
+
 		// start a new game
 		Games.insert(createGame('x'));
 		startTakingTurns();
-		gameInProgress = true;
-		gameStartTime = time;
 		return {
-			message: 'success',
-			gameStartTime: time
+			message: 'success'
 		};
-	},
-	getGameStartTime: function() {
-		return gameStartTime;
-	},
-	getGameInProgress: function() {
-		return gameInProgress;
 	},
 	reset: function() {
 		// !!! TODO(joe) implement this
