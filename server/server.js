@@ -223,15 +223,10 @@ var takeTurn = function(game, scripts) {
 			// 	 [' ', 'o', ' '],
 			// 	 [' ', 'x', ' ']];
 
-			// !!! need to add a time limit to this
-
+			// no to time limit here because it messes with the synchronicity
+			// we need to rely on the tests to catch stuff
 			try {
-				localeval('('+script.logic+')(possibleMove, board)', {possibleMove: possibleMove, board: board}, scriptTimeLimit, function(error, result){
-						if (error) {
-							console.log('localeval caught an error');
-							console.log('ERROR: '+error);
-						}
-				});
+				localeval('('+script.logic+')(possibleMove, board)', {possibleMove: possibleMove, board: board});
 			}
 			catch(e) {
 				console.log('ERROR: '+e);
@@ -246,6 +241,8 @@ var takeTurn = function(game, scripts) {
 	calculateMoveProbabilities(possibleMoves);
 
 	// now possibleMoves has the correct probability associated with each move
+	// we're basically selecting a weighted random entry from the possibleMoves array
+	// so we can't just choose a random index, we need to choose an index based on the probability function defined by the probabilities in possibleMoves
 	var random = Math.random();
 	var count = 0;
 	var index = -1;
