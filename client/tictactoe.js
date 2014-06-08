@@ -197,8 +197,10 @@ Template.scripts.events({
 });
 
 Template.scripts.scripts = function() {
+
+  // display all the scripts for the previous game (or current game if a game is happening)
   var seriesStartTime = 0;
-  var series = Series.findOne({active: true}, {sort: {startTime: -1}});
+  var series = Series.findOne({}, {sort: {startTime: -1}});
   if (series) {
     seriesStartTime = series.startTime;
   }
@@ -210,7 +212,7 @@ Template.scripts.scripts = function() {
 };
 Template.scripts.count = function() {
   var seriesStartTime = 0;
-  var series = Series.findOne({active: true}, {sort: {startTime: -1}});
+  var series = Series.findOne({}, {sort: {startTime: -1}});
   if (series) {
     seriesStartTime = series.startTime;
   }
