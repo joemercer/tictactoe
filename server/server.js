@@ -1,7 +1,7 @@
 var localeval = Meteor.require('localeval');
 
 // settings
-// !!! need to change this to the right value
+// !!! these may need to be edited to make the game better
 var gamesNeededToWin = 100;
 var turnsPerSecond = .1; // seconds
 var startNewGameLag = 1; // second
@@ -231,7 +231,7 @@ var calculateMoveProbabilities = function(possibleMoves) {
 };
 
 var takeTurn = function(game, scripts) {
-	// !!!? potentially want to do a deep clone here
+
 	var possibleMoves = game.possibleMoves;
 	var board = game.board;
 
