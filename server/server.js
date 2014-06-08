@@ -2,7 +2,7 @@ var localeval = Meteor.require('localeval');
 
 // settings
 // !!! need to change this to the right value
-var gamesNeededToWin = 5;
+var gamesNeededToWin = 100;
 var turnsPerSecond = .1; // seconds
 var startNewGameLag = 1; // second
 

@@ -1,8 +1,4 @@
 
-// settings
-// !!! need to change this to the right value
-var gamesNeededToWin = 5;
-
 // # partials
 // __________
 
