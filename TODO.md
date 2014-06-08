@@ -4,7 +4,10 @@
 
 
 - style the intro page (just a little bit)
+
+
 - add just a little transition to the animation
+- - this is super hard for some reason
 
 
 
