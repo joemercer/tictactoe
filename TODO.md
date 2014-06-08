@@ -3,7 +3,8 @@
 
 
 
--clear out scripts
+- needs to sync the existing game to all the clients
+- ugh
 
 
 - add just a little transition to the animation

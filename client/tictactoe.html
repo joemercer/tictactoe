@@ -62,7 +62,7 @@
 	</div>
 	<div class="info-section row">
 		<div class="col-sm-12">
-			<p>HOW TO PLAY: Each turn, each possible move remaining on the board is run through your pipeline of scripts. The move that is eventually applied is randomly chosen, but each script can modify move.weight which is used to create the probability distribution that the applied move is chosen from.</p>
+			<p>HOW TO PLAY: Each turn, each possible move remaining on the board is run through your pipeline of scripts. The move that is eventually applied is randomly chosen, but each script can modify move.weight which is used to create the probability distribution that the applied move is chosen from. Click "Start Game" to begin!</p>
 			<hr>
 			<p>Created by <a href="https://twitter.com/jomrcr">@jomrcr</a> with <a href="https://www.meteor.com/">Meteor</a>. View the code on <a href="https://github.com/joemercer/tictactoe">Github</a>. Have fun :) </p>
 		</div>
@@ -94,7 +94,9 @@
 <template name="newScript">
 	{{> aceEditor}}
 	<br>
-  <button class="btn btn-default btn-submit-script submit-new-script">Submit Code</button>
+	{{#if gameInProgress}}
+		<button class="btn btn-default btn-submit-script submit-new-script">Submit Code</button>
+	{{/if}}
 </template>
 
 <template name="aceEditor">

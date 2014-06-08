@@ -7,7 +7,7 @@ var turnsPerSecond = .5; // seconds
 var startNewGameLag = 1; // second
 
 // amount of time scripts have to run (in milliseconds)
-var scriptTimeLimit = 50;
+var scriptTimeLimit = 100;
 
 // NOTE: game sometimes refers to an individual match, sometimes a best of series
 // sorry

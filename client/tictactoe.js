@@ -167,6 +167,10 @@ Template.newScript.events({
   }
 });
 
+Template.newScript.gameInProgress = function() {
+  return Session.get('gameInProgress');
+};
+
 Template.aceEditor.rendered = function() {
   var editor = ace.edit('aceEditor');
   // editor.setTheme('ace/theme/github');
@@ -201,14 +205,16 @@ Template.scripts.events({
 });
 
 Template.scripts.scripts = function() {
+  var gameStartTime = Session.get('gameStartTime');
   return Scripts.find(
-    {player: Session.get('player')},
+    {player: Session.get('player'), timestamp: {$gt: gameStartTime}},
     {sort: {timestamp: -1}}
   );
 };
 Template.scripts.count = function() {
+  var gameStartTime = Session.get('gameStartTime');
   return Scripts.find(
-    {player: Session.get('player')}
+    {player: Session.get('player'), timestamp: {$gt: gameStartTime}}
   ).count();
 };
 
