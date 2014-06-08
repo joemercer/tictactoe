@@ -101,17 +101,15 @@
 	{{#constant}}
 		<div id='aceEditor'>// function to select moves in a tic tac toe game
 function selectMove(move, board){
-	// if the center space is open
-	if (move.row === 1 && move.column === 1) {
-		// then select the center space
-		move.weight = 1;
-	}
-	// if x has the center space
+	// if x has the center space...
 	if (board[1][1] === 'x') {
-		// and if the top left corner is open
-		if (move.row === 0 && move.column === 0) {
-			// then select the top left corner
+		// set the weight of the bottom middle square
+		if (move.row === 2 && move.column === 1) {
 			move.weight = 1;
+		}
+		// and the top middle square
+		if (move.row === 0 && move.column === 1) {
+			move.weight = 0;
 		}
 	}
 }

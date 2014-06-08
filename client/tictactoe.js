@@ -160,7 +160,7 @@ Template.newScript.events({
         // success!
 
         // replace the text in the code editor
-        editor.setValue('function selectMove(move, board){\n\t// write your code here\n\n\t// for example:\n\t// if the space above and the space below are the same...\n\tif (board[move.row-1][move.column] === board[move.row+1][move.column]) {\n\t\t// increase the probability of choosing that move\n\t\tmove.weight = move.weight + 5;\n\t}\n}');
+        editor.setValue('function selectMove(move, board){\n\t// write your code here\n\n\t// for example:\n\t// increment the weight of the middle right square by 1\n\tif (move.row === 1 && move.column === 2) {\n\t\tmove.weight = move.weight + 1;\n\t}\n}');
       }
 
     });
