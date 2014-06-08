@@ -400,7 +400,7 @@ Meteor.methods({
 		var id = Scripts.insert({
       player: player,
       logic: logic,
-      active: true,
+      active: false,
       timestamp: (new Date()).getTime()
     });
 
