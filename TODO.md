@@ -3,7 +3,7 @@
 
 
 
-- style the intro page (just a little bit)
+-clear out scripts
 
 
 - add just a little transition to the animation

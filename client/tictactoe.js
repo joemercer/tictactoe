@@ -1,5 +1,6 @@
 
 // settings
+// !!! need to change this to the right value
 var gamesNeededToWin = 5;
 
 // # partials
@@ -8,7 +9,8 @@ var gamesNeededToWin = 5;
 // set up the partials logic
 Session.set('partial', 'loggedOut');
 // !!!
-Session.set('partial', 'loggedIn');
+// un-comment this line for testing faster
+// Session.set('partial', 'loggedIn');
 
 Template.partials.helpers({
   partial: function(partialName) {
@@ -21,7 +23,8 @@ Template.partials.helpers({
 
 Session.set('player', null);
 // !!!
-Session.set('player', 'x');
+// un-comment this line for testing faster
+// Session.set('player', 'x');
 
 Template.loggedOut.events({
   'click #login-x': function(e) {
