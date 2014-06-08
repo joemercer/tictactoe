@@ -64,6 +64,10 @@ Template.startButton.gameInProgress = function() {
   return !!series;
 };
 
+Template.startButton.player = function() {
+  return Session.get('player');
+};
+
 
 
 // # stats
