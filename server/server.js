@@ -9,8 +9,31 @@ var startNewGameLag = 1; // second
 // amount of time scripts have to run (in milliseconds)
 var scriptTimeLimit = 100;
 
-// NOTE: game sometimes refers to an individual match, sometimes a best of series
-// sorry
+
+
+// if a series is in progress on startup but the turn taking has stopped for some reason
+// then start it back up
+Meteor.startup(function(){
+
+	var series = Series.findOne({active: true}, {sort: {startTime: -1}});
+
+	if (series) {
+
+		Meteor.clearInterval(turnTakingInterval);
+
+		var game = Games.findOne({result: false, startTime: {$gt: series.startTime}});
+
+		if (game) {
+			startTakingTurns();
+		}
+		else {
+			Games.insert(createGame('x'));
+			startTakingTurns();
+		}
+
+	}
+
+});
 
 
 
