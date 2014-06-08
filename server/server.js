@@ -3,7 +3,8 @@ var localeval = Meteor.require('localeval');
 // settings
 // !!! need to change this to the right value
 var gamesNeededToWin = 5;
-var turnsPerSecond = .1;
+var turnsPerSecond = .5; // seconds
+var startNewGameLag = 1; // second
 
 // amount of time scripts have to run (in milliseconds)
 var scriptTimeLimit = 50;
@@ -255,24 +256,24 @@ var takeTurn = function(game, scripts) {
 	// now move is the selected move to do
 	// and index is the index of that move
 
-	// we need to check for winning conditions
+	// we need to update the game and the board
+	game.possibleMoves.splice(index, 1);
+	game.board[move.row][move.column] = game.currentPlayer;
+	game.turnCount = game.turnCount + 1;
+	game.currentPlayer = getOtherPlayer(game.currentPlayer);
+
+	// then check for a winner
 	var winner = checkForWinner(game.board);
 	if (winner) {
 		game.result = winner;
 	}
 
-	// !!! it seems like it declares the game over before the last turn is taken
-
-	// we need to update the game
-	game.possibleMoves.splice(index, 1);
-	game.board[move.row][move.column] = game.currentPlayer;
-	game.turnCount = game.turnCount + 1;
-	game.currentPlayer = getOtherPlayer(game.currentPlayer);
+	// then check if it's a tie
 	if (!game.result && game.possibleMoves.length === 0) {
 		game.result = 't';
 	}
 
-	// and then update the database
+	// and finally update the database
 	Games.update({_id: game._id}, game);
 
 	// if game is over then start a new game
@@ -280,7 +281,7 @@ var takeTurn = function(game, scripts) {
 	if (game.result) {
 
 		// if we've reached the maximum number of games then stop
-		// and don't need to keep trying to run turns on the server
+		// and no need to keep trying to run turns on the server
 		if (Games.find({result: 't', startTime: {$gt: gameStartTime}}).count() >= gamesNeededToWin) {
 			Meteor.clearInterval(turnTakingInterval);
 			gameInProgress = false;
@@ -301,7 +302,7 @@ var takeTurn = function(game, scripts) {
 
 			Meteor.setTimeout(function(){
 				Games.insert(createGame(getOtherPlayer(game.starter)));
-			}, 1*1000);
+			}, startNewGameLag*1000);
 		}
 	}
 
